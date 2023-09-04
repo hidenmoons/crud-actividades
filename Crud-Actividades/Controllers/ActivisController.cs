@@ -10,7 +10,11 @@ namespace Crud_Actividades.Controllers
     public class ActivisController : ControllerBase
     {
         readonly DbActividadesContext _actividadesContext;
-
+        enum status
+        {
+            ACTIVO,
+            INACTIVA
+        }
         public ActivisController(DbActividadesContext _actividadesContext)
         {
             this._actividadesContext = _actividadesContext;
@@ -28,14 +32,33 @@ namespace Crud_Actividades.Controllers
         [HttpPost]
         public async Task<IActionResult> AgregarActividad(ActivityDTO Actividad)
         {
+            DateTime inicio_cita = Actividad.Schedule;
+            DateTime Fin_cita = Actividad.Schedule.AddHours(1);
             int id = Actividad.PropertyId;
 
             var find_propiedad = await _actividadesContext.Properties.FindAsync(id);
 
-            if (find_propiedad == null)
+            var find_Actividad = _actividadesContext.Activities.Where(x=> x.PropertyId == id && x.Schedule <= Fin_cita && x.Schedule.AddHours(1) >= inicio_cita);
+
+            if (find_Actividad.Any())
             {
-                return StatusCode(StatusCodes.Status400BadRequest,"Propiedad no encontrada");
+                var res = new
+                {
+                    Message ="Horario de cita no disponible"
+                };
+
+                return StatusCode(StatusCodes.Status400BadRequest, res);
             }
+
+            if (find_propiedad == null || find_propiedad.Status == status.INACTIVA.ToString())
+            {
+                var res = new
+                {
+                    Message = "Propiedad no encontrada o propiedad desactivada"
+                };
+                return StatusCode(StatusCodes.Status400BadRequest,res);
+            }
+
             else
             {
                 var nueva_actividad = new Activity
@@ -50,7 +73,8 @@ namespace Crud_Actividades.Controllers
 
                 await _actividadesContext.Activities.AddAsync(nueva_actividad);
                 await _actividadesContext.SaveChangesAsync();
-                return StatusCode(StatusCodes.Status200OK, nueva_actividad);
+
+                return StatusCode(StatusCodes.Status200OK);
             }
 
          

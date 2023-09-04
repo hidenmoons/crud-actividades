@@ -23,18 +23,18 @@ namespace Crud_Actividades.Controllers
         private static string condition(string x, DateTime Schedule)
         {
             DateTime fechahoy = DateTime.Now;
-            if (x=="ACTIVO")
+            if (x == "ACTIVO")
             {
                 if (Schedule >= fechahoy)
                 {
                     return "Pendiente a Realizar";
                 }
-                if ( Schedule <= fechahoy)
+                if (Schedule <= fechahoy)
                 {
                     return "Atrasada";
                 }
             }
-            else if (x== "Done")
+            else if (x == "Done")
             {
                 return "Finalizada";
             }
@@ -42,16 +42,28 @@ namespace Crud_Actividades.Controllers
         }
 
         [HttpGet("Lista_de_Actividades")]
-        public async Task<IActionResult> GetActividades([FromQuery] DateTime? fecha_Rango1=null , [FromQuery] DateTime? fecha_Rango2=null)
+        public async Task<IActionResult> GetActividades(
+            [FromQuery] DateTime? fecha_Rango1 = null, 
+            [FromQuery] DateTime? fecha_Rango2 = null, 
+            [FromQuery] string? estado = null)
         {
             //{ 14 / 09 / 2023 12:00:00 a.m.}
+            //{ 17 / 09 / 2023 08:22:21 p.m.}
+
             DateTime fecha3dias =fecha_Rango1 ?? DateTime.Now.AddDays(-3);
-            DateTime fecha2sem= fecha_Rango1 ?? DateTime.Now.AddDays(14);
-           
-            var propiedades = await _actividadesContext.Activities.
+            DateTime fecha2sem= fecha_Rango2 ?? DateTime.Now.AddDays(14);
+
+            var query = _actividadesContext.Activities.
                 Include(x => x.Property).
-                Include(x=> x.Surveys).
-                Where(x => x.Schedule >= fecha3dias && x.Schedule <= fecha2sem).
+                Include(x => x.Surveys).
+                Where(x => x.Schedule >= fecha3dias.Date && x.Schedule <= fecha2sem.Date);
+
+            if (!string.IsNullOrEmpty(estado))
+            {
+                query = query.Where(x => x.Status == estado);
+            }
+
+            var propiedades = await query.
                 Select(x => new
                 {
                     id = x.IdActivity,

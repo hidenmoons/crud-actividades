@@ -28,17 +28,21 @@ namespace Crud_Actividades.Controllers
             return StatusCode(StatusCodes.Status200OK, propiedades);
 
         }
-
         [HttpPost]
-        public async Task<IActionResult> AgregarActividad(ActivityDTO Actividad)
+        public async Task<IActionResult> Agregar_Actividad(NewActivityDTO Actividad)
         {
             DateTime inicio_cita = Actividad.Schedule;
             DateTime Fin_cita = Actividad.Schedule.AddHours(1);
+
             int id = Actividad.PropertyId;
 
             var find_propiedad = await _actividadesContext.Properties.FindAsync(id);
 
-            var find_Actividad = _actividadesContext.Activities.Where(x=> x.PropertyId == id && x.Schedule <= Fin_cita && x.Schedule.AddHours(1) >= inicio_cita);
+            var find_Actividad = _actividadesContext.Activities.
+            Where(
+            x => x.PropertyId == id && x.Schedule 
+            <= Fin_cita && x.Schedule.AddHours(1) >= inicio_cita
+            );
 
             if (find_Actividad.Any())
             {
@@ -76,10 +80,50 @@ namespace Crud_Actividades.Controllers
 
                 return StatusCode(StatusCodes.Status200OK);
             }
-
-         
-
           
+        }
+        [HttpPut]
+        public async Task<IActionResult> Editar_Actividad(int id, DateTime NuevaFecha)
+        {
+            DateTime inicio_cita = NuevaFecha;
+            DateTime Fin_cita = NuevaFecha.AddHours(1);
+
+            var actividad = await _actividadesContext.Activities.FindAsync(id);
+
+
+
+           var find_Actividad = _actividadesContext.Activities.
+           Where(
+           x => x.PropertyId == id && x.Schedule
+           <= Fin_cita && x.Schedule.AddHours(1) >= inicio_cita
+           );
+
+            if (find_Actividad.Any())
+            {
+                var res = new
+                {
+                    Message = "Horario de cita no disponible"
+                };
+
+                return StatusCode(StatusCodes.Status400BadRequest, res);
+            }
+
+
+            if (actividad == null || actividad.Status!= status.ACTIVO.ToString())
+            {
+                var res = new
+                {
+                    Message = "No se puede Reangendar Actividades Canceladas o Actividades que no existen"
+                };
+                return StatusCode(StatusCodes.Status404NotFound, res);
+            }
+            else
+            {
+
+                actividad.Schedule = NuevaFecha;
+                await _actividadesContext.SaveChangesAsync();
+                return StatusCode(StatusCodes.Status200OK);
+            }
         }
     }
 }

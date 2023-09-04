@@ -1,6 +1,6 @@
 ﻿namespace Crud_Actividades.Models
 {
-    public class ActivityDTO
+    public class NewActivityDTO
     {
         public int PropertyId { get; set; }
 

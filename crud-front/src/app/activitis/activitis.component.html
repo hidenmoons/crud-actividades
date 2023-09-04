@@ -1,8 +1,9 @@
  
  <div class="container mt-4 ">
     <h2>Actividades</h2>
-    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCrear">Agregar</button>
+    
     <div class="row justify-content-center">
+     
         <div class="col-lg-3 col-sm-6">
             <label for="startDateTime">Fecha De Inicio</label>
             <input  [(ngModel)]="startDateTime" id="startDateTime" class="form-control" type="datetime-local" />
@@ -13,9 +14,10 @@
             <input  [(ngModel)]="endDateTime" id="endDateTime" class="form-control" type="datetime-local" />
             <span id="endDateTimeSelected"></span>
         </div>
-        <div class="col-lg-3 col-sm-6">
+        <div class="col-lg-6 col-sm-6">
          <button class="btn btn-primary mt-4" (click)="getactividadesstatus('ACTIVO')">Buscar</button>
-         <button class="btn btn-success mt-4 ms-2" (click)="getactividades()">Quitar Filtros</button>
+         <button class="btn btn-warning mt-4 ms-2" (click)="getactividades()">Quitar Filtros</button>
+         <button class="btn btn-success mt-4 ms-2" data-bs-toggle="modal" data-bs-target="#modalCrear">Agregar</button>
         </div>
         
     </div>

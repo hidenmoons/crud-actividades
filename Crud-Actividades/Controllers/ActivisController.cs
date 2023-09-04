@@ -189,7 +189,6 @@ namespace Crud_Actividades.Controllers
             }
             else
             {
-
                 actividad.Schedule = NuevaFecha;
                 await _actividadesContext.SaveChangesAsync();
                 return StatusCode(StatusCodes.Status200OK);

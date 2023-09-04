@@ -47,8 +47,7 @@ namespace Crud_Actividades.Controllers
             [FromQuery] DateTime? fecha_Rango2 = null, 
             [FromQuery] string? estado = null)
         {
-            //{ 14 / 09 / 2023 12:00:00 a.m.}
-            //{ 17 / 09 / 2023 08:22:21 p.m.}
+          
 
             DateTime fecha3dias =fecha_Rango1 ?? DateTime.Now.AddDays(-3);
             DateTime fecha2sem= fecha_Rango2 ?? DateTime.Now.AddDays(14);
@@ -83,16 +82,6 @@ namespace Crud_Actividades.Controllers
 
                     }
                 }).ToListAsync();
-
-            return StatusCode(StatusCodes.Status200OK, propiedades);
-
-        }
-
-
-        [HttpGet]
-        public async Task<IActionResult> Getpropietys()
-        {
-            var propiedades = _actividadesContext.Properties.AsNoTracking();
 
             return StatusCode(StatusCodes.Status200OK, propiedades);
 
@@ -153,7 +142,7 @@ namespace Crud_Actividades.Controllers
           
         }
         [HttpPut]
-        public async Task<IActionResult> Editar_Actividad(int id, DateTime NuevaFecha)
+        public async Task<IActionResult> Editar_Actividad(int id,  DateTime NuevaFecha)
         {
             DateTime inicio_cita = NuevaFecha;
             DateTime Fin_cita = NuevaFecha.AddHours(1);

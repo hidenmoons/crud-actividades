@@ -1,0 +1,33 @@
+ 
+ <div class="container mt-4 ">
+    <h2>Propiedades</h2>
+    <div class="table-wrapper-scroll-y my-custom-scrollbar">
+        <table class="table table-dark table-striped  table-bordered table-striped mb-0">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Direccion</th>
+          <th scope="col">descripcion</th>
+          <th scope="col">status</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pro of propiedades">
+          <td>{{pro.idProperty}}</td>
+          <td>{{ pro.tittle }}</td>
+          <td>{{ pro.address }}</td>
+          <td>{{pro.descripcion}}</td>
+          <td>{{ pro.status}}</td>
+          <td>
+            <button class="btn btn-success ms-2" (click)="Activitis()" >Agendar Actividad</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+    </div>
+    
+
+  

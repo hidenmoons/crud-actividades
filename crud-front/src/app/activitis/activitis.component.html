@@ -1,0 +1,127 @@
+ 
+ <div class="container mt-4 ">
+    <h2>Actividades</h2>
+    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCrear">Agregar</button>
+    <div class="row justify-content-center">
+        <div class="col-lg-3 col-sm-6">
+            <label for="startDateTime">Fecha De Inicio</label>
+            <input  [(ngModel)]="startDateTime" id="startDateTime" class="form-control" type="datetime-local" />
+            <span id="startDateTimeSelected"></span>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <label for="endDateTime">Fecha Final</label>
+            <input  [(ngModel)]="endDateTime" id="endDateTime" class="form-control" type="datetime-local" />
+            <span id="endDateTimeSelected"></span>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+         <button class="btn btn-primary mt-4" (click)="getactividadesstatus('ACTIVO')">Buscar</button>
+         <button class="btn btn-success mt-4 ms-2" (click)="getactividades()">Quitar Filtros</button>
+        </div>
+        
+    </div>
+    <div class="table-wrapper-scroll-y my-custom-scrollbar m-2">
+        <table class="table table-dark table-striped  table-bordered table-striped mb-0">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">schedule</th>
+          <th scope="col">tittle</th>
+          <th scope="col">status</th>
+          <th scope="col">condition</th>
+          <th scope="col">property ID</th>
+          <th scope="col">tittle property</th>
+          <th scope="col">addres</th>
+          <th scope="col">survey</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pro of Actividades">
+          <td>{{pro.id}}</td>
+          <td>{{ pro.schedule|date:'medium'}}</td>
+          <td>{{ pro.tittle }}</td>
+          <td>{{pro.status}}</td>
+          <td>{{ pro.condition}}</td>
+          <td>{{ pro.property.id }}</td>
+          <td>{{pro.property.tittle}}</td>
+          <td>{{pro.property.addres}}</td>
+          <td>{{pro.property.survey}}</td>
+          <td>
+            <button class="btn btn-warning m-2" data-bs-toggle="modal" data-bs-target="#modalEditar" (click)="Modificar(pro)" >Reangendar</button>
+            <button class="btn btn-danger m-2" (click)="cancelar(pro.id)" >Cancelar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+    </div>
+
+   <!-- Modal para Crear Actividad -->
+   <div class="modal fade" id="modalCrear" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalCrearLabel">Crear Actividad</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form (ngSubmit)="CreateItem()">
+            <div class="form-group">
+              <label for="propertyId">ID de la Propiedad</label>
+              <input type="number" class="form-control" id="propertyId" name="propertyId" [(ngModel)]="newActivity.propertyId">
+            </div>
+            <div class="form-group">
+              <label for="schedule">Fecha y Hora</label>
+              <input type="datetime-local" class="form-control" id="schedule" name="schedule" [(ngModel)]="newActivity.schedule">
+            </div>
+            <div class="form-group">
+              <label for="title">Título</label>
+              <input type="text" class="form-control" id="title" name="title" [(ngModel)]="newActivity.tittle">
+            </div>
+            <div class="form-group">
+              <label for="status">Estado</label>
+              <input type="text" class="form-control" id="status" name="status" [(ngModel)]="newActivity.status">
+            </div>
+            <button type="button" class="btn btn-primary mt-3 m-2" (click)="CreateItem()" data-bs-dismiss="modal">Guardar Actividad</button>
+            <button type="button" class="btn btn-secondary mt-3 m-2" data-bs-dismiss="modal">Cancelar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  modalCrear
+  
+   <!-- Modal para Reagendar Actividad -->
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalCrearLabel">Reangendar Actividad</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form (ngSubmit)="guardar()">
+            <div class="form-group">
+              <label for="propertyId">ID de la Propiedad</label>
+              <input type="number" class="form-control" id="propertyId" name="propertyId" [(ngModel)]="newActivity.id">
+            </div>
+            <div class="form-group">
+              <label for="schedule">Fecha y Hora</label>
+              <input type="datetime-local" class="form-control" id="schedule" name="schedule" [(ngModel)]="newActivity.schedule">
+            </div>
+            <div class="form-group">
+              <label for="tittle">Título</label>
+              <input type="text" class="form-control" id="tittle" name="tittle" [(ngModel)]="newActivity.tittle">
+            </div>
+            <div class="form-group">
+              <label for="status">Estado</label>
+              <input type="text" class="form-control" id="status" name="status" [(ngModel)]="newActivity.status">
+            </div>
+            <button type="button" class="btn btn-primary mt-3 m-2" (click)="guardar()" data-bs-dismiss="modal">Guardar Actividad</button>
+            <button type="button" class="btn btn-secondary mt-3 m-2" data-bs-dismiss="modal">Cancelar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  

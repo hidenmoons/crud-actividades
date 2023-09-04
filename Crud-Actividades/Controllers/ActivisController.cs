@@ -20,6 +20,63 @@ namespace Crud_Actividades.Controllers
             this._actividadesContext = _actividadesContext;
         }
 
+        private static string condition(string x, DateTime Schedule)
+        {
+            DateTime fechahoy = DateTime.Now;
+            if (x=="ACTIVO")
+            {
+                if (Schedule >= fechahoy)
+                {
+                    return "Pendiente a Realizar";
+                }
+                if ( Schedule <= fechahoy)
+                {
+                    return "Atrasada";
+                }
+            }
+            else if (x== "Done")
+            {
+                return "Finalizada";
+            }
+            return "";
+        }
+
+        [HttpGet("Lista_de_Actividades")]
+        public async Task<IActionResult> GetActividades([FromQuery] DateTime? fecha_Rango1=null , [FromQuery] DateTime? fecha_Rango2=null)
+        {
+            //{ 14 / 09 / 2023 12:00:00 a.m.}
+            DateTime fecha3dias =fecha_Rango1 ?? DateTime.Now.AddDays(-3);
+            DateTime fecha2sem= fecha_Rango1 ?? DateTime.Now.AddDays(14);
+           
+            var propiedades = await _actividadesContext.Activities.
+                Include(x => x.Property).
+                Include(x=> x.Surveys).
+                Where(x => x.Schedule >= fecha3dias && x.Schedule <= fecha2sem).
+                Select(x => new
+                {
+                    id = x.IdActivity,
+                    schedule= x.Schedule,
+                    tittle = x.Title,
+                    cread_at = x.CreatedAt,
+                    status = x.Status,
+                    condition = condition(x.Status,x.Schedule),
+                    Property = new
+                    {
+                        id = x.Property.IdProperty,
+                        tittle = x.Property.Tittle,
+                        addres = x.Property.Address
+                    },
+                    Survey = new
+                    {
+
+                    }
+                }).ToListAsync();
+
+            return StatusCode(StatusCodes.Status200OK, propiedades);
+
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> Getpropietys()
         {
@@ -28,6 +85,7 @@ namespace Crud_Actividades.Controllers
             return StatusCode(StatusCodes.Status200OK, propiedades);
 
         }
+
         [HttpPost]
         public async Task<IActionResult> Agregar_Actividad(NewActivityDTO Actividad)
         {
@@ -124,6 +182,29 @@ namespace Crud_Actividades.Controllers
                 await _actividadesContext.SaveChangesAsync();
                 return StatusCode(StatusCodes.Status200OK);
             }
+        }
+        [HttpDelete]
+        public async Task<ActionResult> Cancelar_Actividad(int id, string status)
+        {
+            status.ToUpper();
+
+            var actividad = _actividadesContext.Activities.Find(id);
+            if (actividad == null)
+            {
+                var res = new
+                {
+                    Message = "Actividad no valida"
+                };
+
+                return StatusCode(StatusCodes.Status404NotFound, res);
+            }
+            else
+            {
+                actividad.Status = status;
+                await _actividadesContext.SaveChangesAsync();
+                return StatusCode(StatusCodes.Status202Accepted);
+            }
+        
         }
     }
 }
